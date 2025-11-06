@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sweet Bites — Онлайн заказ десертов</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      background: #fff;
+      color: #333;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px 40px;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      color: #d46a6a;
+      font-weight: 700;
+      font-size: 24px;
+    }
+    header nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    header nav a:hover {
+      color: #d46a6a;
+    }
+
+    /* HERO */
+    .hero {
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      color: #fff;
+      padding-top: 80px;
+    }
+    .hero h2 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .hero p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      max-width: 600px;
+    }
+    .hero button {
+      background: #d46a6a;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .hero button:hover {
+      background: #b54c4c;
+    }
+
+    /* PRODUCTS */
+    .products {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .products h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 50px;
+      color: #d46a6a;
+    }
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+    .product {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      transition: 0.3s;
+    }
+    .product:hover {
+      transform: translateY(-5px);
+    }
+    .product img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    .product h3 {
+      margin: 15px 0 5px;
+      color: #333;
+    }
+    .product p {
+      margin: 0 0 15px;
+      color: #777;
+    }
+    .product button {
+      background: #d46a6a;
+      color: #fff;
+      border: none;
+      padding: 10px 25px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .product button:hover {
+      background: #b54c4c;
+    }
+
+    /* ORDER */
+    .order {
+      background: #fdf4f4;
+      padding: 80px 20px;
+      text-align: center;
+    }
+    .order h2 {
+      color: #d46a6a;
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+    .order__form {
+      max-width: 450px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .order__form input, .order__form textarea, .order__form button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .order__form button {
+      background: #d46a6a;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .order__form button:hover {
+      background: #b54c4c;
+    }
+
+    footer {
+      background: #d46a6a;
+      color: #fff;
+      text-align: center;
+      padding: 20px 10px;
+      margin-top: 40px;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal.active { display: flex; }
+    .modal__content {
+      background: #fff;
+      padding: 25px 35px;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal__content.success { border: 3px solid green; }
+    .modal__content.error { border: 3px solid red; }
+    .modal__message { font-size: 18px; margin-bottom: 20px; }
+    .modal__close {
+      background: #d46a6a;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .hero h2 { font-size: 32px; }
+      .hero p { font-size: 16px; }
+    }
+
+    /* =========================
+       Добавленные стили (не вмешиваются в существующие)
+       Префикс: .sb- (Sweet Bites) — чтобы не ломать оригинал
+       ========================= */
+    .sb-section {
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Horizontal accordion */
+    .sb-accordion {
+      display:flex;
+      width:100%;
+      height:420px;
+      border-radius:10px;
+      overflow:hidden;
+      gap:0;
+      background:#fff;
+      box-shadow:0 6px 20px rgba(0,0,0,0.06);
+    }
+    .sb-accordion .sb-item {
+      flex:0 0 auto;
+      width:0;
+      min-width:70px;
+      overflow:hidden;
+      position:relative;
+      transition: width .45s cubic-bezier(.2,.8,.2,1);
+      color:#333;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      background-size:cover;
+      background-position:center;
+    }
+    .sb-accordion .sb-handle {
+      position:absolute;
+      top:0; left:0; right:0;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.18));
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      user-select:none;
+    }
+    .sb-accordion .sb-content {
+      padding:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(0,0,0,0.06));
+      color:#2f1f22;
+      width:100%;
+    }
+    .sb-accordion .sb-item.active {
+      width: var(--sb-target, 300px);
+    }
+    @media (max-width:767px){
+      .sb-accordion{flex-direction:column;height:auto}
+      .sb-accordion .sb-item{width:100%}
+      .sb-accordion .sb-item.active{width:100%}
+      .sb-accordion .sb-content{padding:12px}
+    }
+
+    /* Video player */
+    .sb-video-wrap{display:flex;flex-direction:column;align-items:center;gap:.6rem}
+    .sb-video-wrap video{max-width:100%;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .sb-video-controls{display:flex;gap:.5rem;align-items:center;margin-top:.5rem}
+    .sb-video-controls button{padding:.45rem .65rem;border-radius:6px;border:0;background:#f7f3f3;cursor:pointer}
+
+    /* Map container (responsive) */
+    .sb-map-wrap iframe{width:100%;height:520px;border:0;border-radius:8px;display:block}
+    @media (max-width:767px){
+      .sb-map-wrap iframe{height:360px}
+    }
+
+    /* small helpers */
+    .sb-center{text-align:center}
+    .sb-btn{background:#d46a6a;color:#fff;padding:10px 16px;border-radius:20px;border:0;cursor:pointer}
+    .sb-order-quick{margin-top:12px}
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sweet Bites</h1>
+    <nav>
+      <a href="#products">Каталог</a>
+      <a href="#order">Заказ</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Нежные десерты с доставкой на дом</h2>
+    <p>Попробуй свежие торты, макаруны и капкейки, приготовленные с любовью ❤️</p>
+    <button onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">
+      Сделать заказ
+    </button>
+  </section>
+
+  <section class="products" id="products">
+    <h2>Наши десерты</h2>
+    <div class="product-list">
+      <div class="product">
+        <img src="cupcakes-8623551_960_720.jpg" alt="Капкейки">
+        <h3>Капкейки</h3>
+        <p>6 шт — 5500тг</p>
+        <button onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">Заказать</button>
+      </div>
+      <div class="product">
+        <img src="cake-1850011_960_720.jpg" alt="Торт">
+        <h3>Торт</h3>
+        <p>1 кг — 7700тг</p>
+        <button onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">Заказать</button>
+      </div>
+      <div class="product">
+        <img src="macarons-5690175_960_720.jpg" alt="Макаруны">
+        <h3>Макаруны</h3>
+        <p>12 шт — 5800тг</p>
+        <button onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">Заказать</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== НОВЫЕ СЕКЦИИ (добавлены по инструкции) ========== -->
+
+  <!-- 1) Горизонтальный аккордеон (категории) -->
+<!-- 🌸 АККОРДЕОН КАТЕГОРИЙ -->
+<section class="sb-section" id="sb-accordion-section" aria-label="Категории - аккордеон">
+  <h2 class="sb-center" style="color:#d46a6a">Категории (Аккордеон)</h2>
+  <p class="sb-center" style="color:#6b5b5b">Нажмите на категорию, чтобы увидеть описание. Вы можете заменить фото на свои — просто вставьте ссылки в атрибут <code>data-img</code>.</p>
+
+  <div class="sb-accordion" id="sbAccordion">
+    <div class="sb-item" data-width="45" data-img="cake-1971552_1280.jpg">
+      <div class="sb-handle">Торты</div>
+      <div class="sb-content">
+        <h3>Торты</h3>
+        <p>Авторские и классические торты на любой праздник.</p>
+        <button class="sb-btn sb-order-quick" data-product="Торт">Заказать торт</button>
+      </div>
+    </div>
+
+    <div class="sb-item" data-width="30" data-img="cookies-4053771_960_720.jpg">
+      <div class="sb-handle">Макаруны</div>
+      <div class="sb-content">
+        <h3>Макаруны</h3>
+        <p>Французские макаруны разных вкусов. Упаковки от 6 шт.</p>
+        <button class="sb-btn sb-order-quick" data-product="Макаруны">Заказать макаруны</button>
+      </div>
+    </div>
+
+    <div class="sb-item" data-width="25" data-img="istockphoto-1167344045-2048x2048.jpg">
+      <div class="sb-handle">Чизкейки</div>
+      <div class="sb-content">
+        <h3>Чизкейки</h3>
+        <p>Кремовые чизкейки с ягодным топпингом.</p>
+        <button class="sb-btn sb-order-quick" data-product="Чизкейк">Заказать чизкейк</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sb-accordion {
+    display: flex;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #ffeef2;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+
+  .sb-item {
+    position: relative;
+    flex: 1;
+    transition: all 0.4s ease;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .sb-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 18px;
+    transition: 0.3s ease;
+  }
+
+  .sb-item:hover::before {
+    background: rgba(0,0,0,0.5);
+  }
+
+  .sb-handle {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
+
+  .sb-content {
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: 0.4s ease;
+    text-align: center;
+  }
+
+  .sb-item.active .sb-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sb-btn {
+    background: #ffb6c1;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .sb-btn:hover {
+    background: #ff94ad;
+  }
+
+  @media (max-width: 768px) {
+    .sb-accordion {
+      flex-direction: column;
+    }
+    .sb-item {
+      height: 220px;
+    }
+  }
+</style>
+
+<script>
+  // Подключение фото из data-img
+  document.querySelectorAll('.sb-item').forEach(item => {
+    const img = item.getAttribute('data-img');
+    if (img) item.style.backgroundImage = `url('${img}')`;
+  });
+
+  // Эффект аккордеона
+  const items = document.querySelectorAll('.sb-item');
+  items.forEach(i => {
+    i.addEventListener('click', () => {
+      items.forEach(it => it.classList.remove('active'));
+      i.classList.add('active');
+    });
+  });
+</script>
+
+
+
+  <!-- 2) Видео (HTML5 API) -->
+  <!-- 2) Видео (HTML5 API / YouTube Embed) -->
+<!-- 2) Видео (YouTube Embed вместо MP4) -->
+<!-- Замените вашу секцию видео на этот блок -->
+<section class="sb-section sb-center" id="sb-video-section" aria-label="Видео">
+  <h2 style="color:#d46a6a">Видео: как мы готовим (тестовый MP4)</h2>
+  <p style="color:#6b5b5b">Если этот ролик воспроизводится — значит проблема была в URL/доступности исходного MP4.</p>
+
+  <div class="sb-video-wrap" style="margin-top:18px">
+    <video id="sbVideo" width="960" preload="metadata" controls>
+      <!-- Рабочая проверенная ссылка -->
+      <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+
+    <div class="sb-video-controls" id="sbVideoControls" style="margin-top:8px">
+      <button id="sbPlay">Play</button>
+      <button id="sbMute">Mute</button>
+      <input type="range" id="sbSeek" min="0" max="100" value="0" aria-label="Прогресс">
+      <span id="sbTime">00:00 / 00:00</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Простой контроллер для блока выше
+  (function(){
+    const video = document.getElementById('sbVideo');
+    const playBtn = document.getElementById('sbPlay');
+    const muteBtn = document.getElementById('sbMute');
+    const seek = document.getElementById('sbSeek');
+    const timeLabel = document.getElementById('sbTime');
+
+    if(!video) return;
+
+    function fmt(s){
+      if(isNaN(s)) return '00:00';
+      const m = Math.floor(s/60).toString().padStart(2,'0');
+      const sec = Math.floor(s%60).toString().padStart(2,'0');
+      return m + ':' + sec;
+    }
+
+    video.addEventListener('loadedmetadata', ()=>{
+      timeLabel.textContent = '00:00 / ' + fmt(video.duration);
+    });
+
+    video.addEventListener('timeupdate', ()=>{
+      const pct = (video.currentTime / video.duration) * 100;
+      if(!isNaN(pct)) seek.value = Math.max(0, Math.min(100, pct));
+      timeLabel.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+      playBtn.textContent = video.paused ? 'Play' : 'Pause';
+    });
+
+    playBtn.addEventListener('click', ()=> {
+      if(video.paused) video.play();
+      else video.pause();
+    });
+
+    muteBtn.addEventListener('click', ()=> {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+    });
+
+    seek.addEventListener('input', (e)=>{
+      if(isNaN(video.duration)) return;
+      const t = (Number(e.target.value)/100) * video.duration;
+      video.currentTime = t;
+    });
+  })();
+</script>
+
+
+
+
+
+
+  <!-- 3) Google Map (Астана, Казахстан) -->
+ <!-- Секция карты -->
+<section id="map-section" class="sb-section sb-center" style="margin-top:40px;">
+  <h2 style="color:#d46a6a;">Мы на карте</h2>
+  <p style="color:#6b5b5b;">Адрес: Казахстан, Астана, проспект Кабанбай Батыра, 8</p>
+
+  <div style="margin-top:18px; border: 3px solid #f4bebe; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <iframe
+      src="https://www.google.com/maps?q=Астана,+Кабанбай+Батыра+8&output=embed"
+      width="100%"
+      height="400"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</section>
+
+
+  <!-- Оригинальная секция заказа (не тронута) -->
+  <section class="order" id="order">
+    <h2>Оформление заказа</h2>
+    <form id="orderForm" class="order__form">
+      <input type="text" name="name" placeholder="Ваше имя" required>
+      <input type="tel" name="phone" placeholder="Телефон" required>
+      <textarea name="comment" placeholder="Комментарий (что заказать?)"></textarea>
+      <input type="hidden" name="to" value="test@example.com">
+      <button type="submit">Отправить заказ</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 Sweet Bites | Разработано с ❤️ | API: 
+      <a href="https://webdev-api.loftschool.com/sendmail" style="color:#fff;text-decoration:underline" target="_blank">
+        webdev-api.loftschool.com/sendmail
+      </a>
+    </p>
+  </footer>
+
+  <div class="modal" id="modal">
+    <div class="modal__content">
+      <p class="modal__message"></p>
+      <button class="modal__close">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- =========================
+       Скрипты: OnePageScroll (snap scroll), аккордеон, видео, карта-инструкции, форма
+       ========================= -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      /* =========================
+         OnePageScroll (snap to major sections)
+         - Определяем последовательность секций (не изменяем оригинал)
+         - Реакция на wheel, клавиши, touch
+         - Скролл реализован через element.scrollIntoView({behavior:'smooth'})
+         ========================= */
+      (function(){
+        const sectionSelectors = [
+          '.hero',
+          '.products',
+          '#sb-accordion-section',
+          '#sb-video-section',
+          '#sb-map-section',
+          '.order'
+        ];
+        const sections = sectionSelectors.map(sel => document.querySelector(sel)).filter(Boolean);
+        let current = 0;
+        let animating = false;
+
+        function goTo(index){
+          if(index < 0) index = 0;
+          if(index >= sections.length) index = sections.length - 1;
+          if(index === current) return;
+          current = index;
+          animating = true;
+          sections[current].scrollIntoView({behavior:'smooth', block:'start'});
+          setTimeout(()=> animating = false, 850);
+        }
+
+        // wheel
+        let wheelTimeout;
+        window.addEventListener('wheel', function(e){
+          if(animating) return;
+          clearTimeout(wheelTimeout);
+          wheelTimeout = setTimeout(()=>{}, 50);
+          const delta = e.deltaY;
+          if(Math.abs(delta) < 10) return;
+          if(delta > 0) goTo(current + 1);
+          else goTo(current - 1);
+        }, {passive:true});
+
+        // keyboard
+        window.addEventListener('keydown', function(e){
+          if(e.key === 'ArrowDown' || e.key === 'PageDown') { goTo(current+1); }
+          if(e.key === 'ArrowUp' || e.key === 'PageUp') { goTo(current-1); }
+          if(/^[1-9]$/.test(e.key)) { const n = Number(e.key)-1; if(n < sections.length) goTo(n); }
+        });
+
+        // touch swipe (very simple)
+        (function(){
+          let startY = null, startTime = 0;
+          window.addEventListener('touchstart', function(e){
+            if(e.touches.length !== 1) return;
+            startY = e.touches[0].clientY;
+            startTime = Date.now();
+          }, {passive:true});
+          window.addEventListener('touchend', function(e){
+            if(startY === null) return;
+            const dy = e.changedTouches[0].clientY - startY;
+            const dt = Date.now() - startTime;
+            if(Math.abs(dy) > 40 && dt < 800){
+              if(dy > 0) goTo(current - 1); else goTo(current + 1);
+            }
+            startY = null;
+          }, {passive:true});
+        })();
+
+        // When clicking header nav anchors - scroll to that section (keeps compatibility)
+        document.querySelectorAll('a[href^="#"]').forEach(a=>{
+          a.addEventListener('click', function(ev){
+            // allow default anchor behavior but also sync current index to avoid mismatch
+            setTimeout(()=> {
+              const idx = sections.findIndex(s => s && s.contains(document.querySelector(this.getAttribute('href')) || document.querySelector(this.getAttribute('href'))));
+              // Not strictly necessary; we keep simple: recompute current by nearest
+            }, 10);
+          });
+        });
+      })();
+
+      /* =========================
+         Горизонтальный аккордеон (SB)
+         - items have data-width as percent
+         - on mobile (<768) open to 100% width
+         ========================= */
+      (function(){
+        const accordion = document.getElementById('sbAccordion');
+        if(!accordion) return;
+        const items = Array.from(accordion.querySelectorAll('.sb-item'));
+
+        function closeAll(){
+          items.forEach(it => {
+            it.classList.remove('active');
+            it.style.setProperty('--sb-target','0px');
+          });
+        }
+
+        function openItem(item){
+          const isMobile = window.innerWidth < 768;
+          if(isMobile){
+            if(item.classList.contains('active')) {
+              item.classList.remove('active');
+              item.style.setProperty('--sb-target','0px');
+            } else {
+              closeAll();
+              item.classList.add('active');
+              item.style.setProperty('--sb-target','100%');
+              // scroll into view a bit on mobile
+              setTimeout(()=> item.scrollIntoView({behavior:'smooth', block:'center'}), 200);
+            }
+            return;
+          }
+
+          const total = accordion.clientWidth;
+          const p = Number(item.dataset.width) || 30;
+          const px = Math.round(total * (p/100));
+          if(item.classList.contains('active')){
+            item.classList.remove('active');
+            item.style.setProperty('--sb-target','0px');
+          } else {
+            closeAll();
+            item.classList.add('active');
+            item.style.setProperty('--sb-target', px + 'px');
+          }
+        }
+
+        items.forEach(it=>{
+          const handle = it.querySelector('.sb-handle');
+          handle.addEventListener('click', function(e){
+            e.stopPropagation();
+            openItem(it);
+          });
+          // clicking content quick-order button
+          const q = it.querySelector('.sb-order-quick');
+          if(q){
+            q.addEventListener('click', function(e){
+              e.stopPropagation();
+              const product = q.dataset.product || '';
+              // prefill original order form (keeps original form)
+              const orderForm = document.getElementById('orderForm');
+              if(orderForm){
+                const comment = orderForm.querySelector('textarea[name="comment"]');
+                if(comment) comment.value = product;
+                // go to order section
+                document.getElementById('order').scrollIntoView({behavior:'smooth'});
+              }
+            });
+          }
+        });
+
+        // open default first item on desktop
+        function openDefault(){
+          if(window.innerWidth >= 768 && items[0]) {
+            openItem(items[0]);
+          }
+        }
+        openDefault();
+
+        window.addEventListener('resize', function(){
+          items.forEach(it=>{
+            if(!it.classList.contains('active')) return;
+            if(window.innerWidth < 768) it.style.setProperty('--sb-target','100%');
+            else {
+              const total = accordion.clientWidth;
+              const p = Number(it.dataset.width) || 30;
+              const px = Math.round(total * (p/100));
+              it.style.setProperty('--sb-target', px + 'px');
+            }
+          });
+        });
+      })();
+
+      /* =========================
+         Видео: HTML5 API controls
+         - play/pause, mute, seek, time update
+         ========================= */
+      (function(){
+        const video = document.getElementById('sbVideo');
+        const playBtn = document.getElementById('sbPlay');
+        const muteBtn = document.getElementById('sbMute');
+        const seek = document.getElementById('sbSeek');
+        const timeLabel = document.getElementById('sbTime');
+
+        if(!video) return;
+
+        function fmt(s){
+          if(isNaN(s)) return '00:00';
+          const m = Math.floor(s/60).toString().padStart(2,'0');
+          const sec = Math.floor(s%60).toString().padStart(2,'0');
+          return m + ':' + sec;
+        }
+
+        video.addEventListener('loadedmetadata', function(){
+          timeLabel.textContent = '00:00 / ' + fmt(video.duration);
+        });
+
+        video.addEventListener('timeupdate', function(){
+          const pct = (video.currentTime / video.duration) * 100;
+          if(!isNaN(pct)) seek.value = Math.max(0, Math.min(100, pct));
+          timeLabel.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+          playBtn.textContent = video.paused ? 'Play' : 'Pause';
+        });
+
+        playBtn.addEventListener('click', function(){ if(video.paused) video.play(); else video.pause(); });
+        muteBtn.addEventListener('click', function(){ video.muted = !video.muted; muteBtn.textContent = video.muted ? 'Unmute' : 'Mute'; });
+
+        seek.addEventListener('input', function(e){
+          if(isNaN(video.duration)) return;
+          const t = (Number(e.target.value)/100) * video.duration;
+          video.currentTime = t;
+        });
+      })();
+
+      /* =========================
+         Карта (Google Maps embed)
+         - Уже вставлена iframe с параметрами
+         - Если хотите динамику (маркер, стили) — нужен JS API ключ и подгрузка библиотеки,
+           могу показать, как интегрировать при наличии ключа.
+         ========================= */
+      // No extra JS needed for iframe embed.
+
+      /* =========================
+         Оригинальная форма: отправка через loftschool API (оставлена как было)
+         + модальное окно
+         ========================= */
+      (function(){
+        const form = document.getElementById("orderForm");
+        const modal = document.getElementById("modal");
+        const modalMessage = modal.querySelector(".modal__message");
+        const modalContent = modal.querySelector(".modal__content");
+        const modalClose = modal.querySelector(".modal__close");
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const data = {
+            name: form.elements.name.value.trim(),
+            phone: form.elements.phone.value.trim(),
+            comment: form.elements.comment.value.trim(),
+            to: form.elements.to.value.trim(),
+          };
+
+          if (!data.name || !data.phone || !data.to) {
+            showModal("Пожалуйста, заполните все поля!", "error");
+            return;
+          }
+
+          try {
+            const response = await fetch("https://webdev-api.loftschool.com/sendmail", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+            const result = await response.json();
+
+            if (result.status === "success") {
+              showModal(result.message || "Заказ успешно отправлен!", "success");
+              form.reset();
+            } else {
+              showModal(result.message || "Ошибка при отправке заказа!", "error");
+            }
+          } catch {
+            showModal("Ошибка соединения с сервером!", "error");
+          }
+        });
+
+        modalClose.addEventListener("click", () => modal.classList.remove("active"));
+        modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("active"); });
+
+        function showModal(msg, type) {
+          modalMessage.textContent = msg;
+          modalContent.className = `modal__content ${type}`;
+          modal.classList.add("active");
+        }
+      })();
+
+      /* =========================
+         Доп. UX: плавный scrollTo для кнопок заказа в карточках (сохранено)
+         ========================= */
+      // (Кнопки уже используют inline onclick в оригинальном файле.)
+
+    }); // DOMContentLoaded
+  </script>
+</body>
+</html>
